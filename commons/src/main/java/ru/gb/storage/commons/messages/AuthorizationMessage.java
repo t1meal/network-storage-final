@@ -1,13 +1,15 @@
 package ru.gb.storage.commons.messages;
 
-
-
 import io.netty.channel.ChannelHandlerContext;
+
+
+import java.io.IOException;
 
 public class AuthorizationMessage extends Message{
 
-    private String login = "login1";
-    private String password = "pass1";
+    private String login;
+    private String password;
+    private boolean AuthorizationStatus = false;
 
     public AuthorizationMessage(String login, String password) {
         this.login = login;
@@ -22,16 +24,22 @@ public class AuthorizationMessage extends Message{
         return password;
     }
 
+    public boolean getAuthorizationStatus() {
+        return AuthorizationStatus;
+    }
+
+    public void setAuthorizationStatus(boolean authorizationStatus) {
+        AuthorizationStatus = authorizationStatus;
+    }
+
     @Override
-    public void handle(ChannelHandlerContext ctx) {
-        String clientLogin = getLogin();
-        String clientPassword = getPassword();
-        if (this.toString().contains(clientLogin) && this.toString().contains(clientPassword)) {
-            System.out.println("incoming authorization successful!");
-            ctx.writeAndFlush("true");
-        } else {
-            System.out.println("incoming authorization unsuccessful!");
-            ctx.writeAndFlush("false");
+    public void handle(ChannelHandlerContext ctx) throws IOException{
+        System.out.println("new auth message");
+        if (getLogin().equals("login1") && getPassword().equals("pass1")){
+            setAuthorizationStatus(true);
         }
     }
 }
+
+
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #cccc99;"
+            xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.gb.storage.client.FxController">
+
+    <AnchorPane fx:id="WorkingPane" layoutX="26.0" layoutY="23.0" managed="false" prefHeight="365.0" prefWidth="550.0" style="-fx-background-color: #cc9966;">
+        <Button fx:id="serverCopyButton" layoutX="59.0" layoutY="14.0" mnemonicParsing="false" text="Copy" />
+        <Button fx:id="serverMoveButton" layoutX="114.0" layoutY="14.0" mnemonicParsing="false" text="Move" />
+        <Button fx:id="serverDeleteButton" layoutX="167.0" layoutY="14.0" mnemonicParsing="false" text="Delete" />
+        <Button fx:id="clientDeleteButton" layoutX="443.0" layoutY="14.0" mnemonicParsing="false" text="Delete" />
+        <Button fx:id="clientMoveButton" layoutX="387.0" layoutY="14.0" mnemonicParsing="false" text="Move" />
+        <Button fx:id="clientCopyButton" layoutX="331.0" layoutY="14.0" mnemonicParsing="false" text="Copy" />
+        <ScrollPane layoutX="12.0" layoutY="51.0" prefHeight="300.0" prefWidth="250.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+        </ScrollPane>
+        <ScrollPane layoutX="285.0" layoutY="51.0" prefHeight="300.0" prefWidth="250.0">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+        </ScrollPane>
+    </AnchorPane>
+
+</AnchorPane>

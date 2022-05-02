@@ -10,5 +10,5 @@ import java.io.IOException;
         property = "type"
 )
 public abstract class Message {
-    public abstract void handle(ChannelHandlerContext ctx) throws IOException;
+    public abstract void handle(ChannelHandlerContext ctx) throws IOException, Exception;
 }

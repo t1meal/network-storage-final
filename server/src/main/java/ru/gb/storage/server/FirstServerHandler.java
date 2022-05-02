@@ -13,7 +13,8 @@ import java.io.IOException;
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws IOException {
+        protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+            System.out.println("New message " + msg.getClass().toString());
             msg.handle(ctx);
         }
 

@@ -5,14 +5,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ru.gb.storage.client.controller.FxController;
 
-import java.io.File;
-import java.util.Objects;
-
-public class Client extends Application {
+public class ClientFx extends Application {
     private final double WIDTH = 600;
     private final double HEIGHT = 600;
+
 
     public static void main(String[] args) {
        launch(args);
@@ -29,6 +26,8 @@ public class Client extends Application {
         primaryStage.setHeight(HEIGHT);
 
         primaryStage.show();
+        new FxController().connect();
+
 
 
 
