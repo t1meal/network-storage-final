@@ -13,17 +13,17 @@ public class FileRequestMessage extends Message {
     private int counter = 0;
     private RandomAccessFile accessFile;
 
+    public FileRequestMessage(String path) {
+        this.path = path;
+    }
+
     @Override
-    public void handle(ChannelHandlerContext ctx) {
-        try {
+    public void handle(ChannelHandlerContext ctx) throws IOException {
             final File file = new File(getPath());
             if (accessFile == null){
                 accessFile = new RandomAccessFile(file, "r");
                 sendFile(ctx);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void sendFile(ChannelHandlerContext ctx) throws IOException {

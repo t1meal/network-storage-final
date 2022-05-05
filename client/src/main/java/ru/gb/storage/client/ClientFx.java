@@ -13,26 +13,16 @@ public class ClientFx extends Application {
 
     public static void main(String[] args) {
        launch(args);
-
     }
 
     public void start(Stage primaryStage) throws Exception {
-
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/sample.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("DropBox");
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
-
-        primaryStage.show();
-        new FxController().connect();
-
-
-
-
-
-//        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+        //        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 //            @Override
 //            public void handle(WindowEvent event) {
 //                System.out.println("Stage is closing");
@@ -40,8 +30,11 @@ public class ClientFx extends Application {
 //                System.exit(1);
 //
 //            }
-        }
+        primaryStage.show();
+        new NetworkController().connect();
+
     }
+}
 
 
 

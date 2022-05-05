@@ -19,18 +19,6 @@ public class FileContentMessage extends Message{
         this.last = last;
     }
 
-    @Override
-    public void handle(ChannelHandlerContext ctx) throws IOException  {
-        accessFile = new RandomAccessFile("F:\\9.pdf", "rw");
-        System.out.println(getStartPosition());
-        accessFile.seek(getStartPosition());
-        accessFile.write(getContent());
-        if (isLast()){
-            ctx.close();
-        }
-    }
-
-
     public long getStartPosition() {
         return startPosition;
     }
@@ -47,6 +35,15 @@ public class FileContentMessage extends Message{
         this.content = content;
     }
 
-
+    @Override
+    public void handle(ChannelHandlerContext ctx) throws IOException  {
+        accessFile = new RandomAccessFile("F:\\9.pdf", "rw");
+        System.out.println(getStartPosition());
+        accessFile.seek(getStartPosition());
+        accessFile.write(getContent());
+        if (isLast()){
+            ctx.close();
+        }
+    }
 }
 

@@ -40,6 +40,7 @@ public class Server {
                                     new LengthFieldPrepender(3),
                                     new JSonDecoder(),
                                     new JSonEncoder(),
+                                    new AuthorizationHandler(),
                                     new FirstServerHandler());
                         }
                     })

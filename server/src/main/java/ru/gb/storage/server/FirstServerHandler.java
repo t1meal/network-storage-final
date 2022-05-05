@@ -27,7 +27,7 @@ import java.io.IOException;
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws IOException {
-            System.out.println("client disconnect");
+            System.out.println("Client disconnect!");
         }
     }
 

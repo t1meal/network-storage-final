@@ -1,107 +1,53 @@
 package ru.gb.storage.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.util.CharsetUtil;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import ru.gb.storage.commons.handlers.JSonDecoder;
 import ru.gb.storage.commons.handlers.JSonEncoder;
-import ru.gb.storage.commons.messages.AuthorizationMessage;
-import ru.gb.storage.commons.messages.FileRequestMessage;
 import ru.gb.storage.commons.messages.Message;
-import ru.gb.storage.commons.messages.TextMessage;
-
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
-public class FxController {
-@FXML
-    AnchorPane AuthorizationPane;
-@FXML
-    Button AuthButton;
-@FXML
-    TextField loginField;
-@FXML
-    PasswordField passwordField;
-@FXML
-    AnchorPane WorkingPane;
-@FXML
-    Button StartClient;
+public class NetworkController {
 
-
-        private static final int PORT = 9000;
-        private static final String INET_HOST = "localhost";
-        private BooleanProperty connected = new SimpleBooleanProperty(false);
-        private Channel channel;
+        private final int PORT = 9000;
+        private final String INET_HOST = "localhost";
+        private static boolean connected;
+        private static Channel channel;
         private NioEventLoopGroup group;
 
 
-        public void tryToAuth() {
-            System.out.println("touch Войти");
-            AuthorizationMessage message = new AuthorizationMessage(loginField.getText(), passwordField.getText());
-
-            send(message);
-
-            if (message.getAuthorizationStatus()){
-              connected.set(true);
-              ChangeScene change = new ChangeScene();
-              change.moveScene(AuthButton);
-            }
-        }
-
-        public void send(Message message){
-
-                if(!connected.get() ) {
+//      4. метод отправки сообщений серверу
+        public static void send(Message message){
+                if(!connected) {
                     return;
                 }
                 Task task = new Task() {
                     @Override
                     protected Void call() throws Exception {
-
-                        ChannelFuture future = channel.writeAndFlush(new TextMessage());
+                        ChannelFuture future = channel.writeAndFlush(message);
                         future.sync();
                         return null;
                     }
-
                     @Override
                     protected void failed() {
-//                        connected.set(false);
+                        System.out.println("Неудачная попытка отправки сообщения!");
                     }
                 };
                 new Thread(task).start();
         }
 
-
+//      1. первичный метод установления соединения с сервером
         public void connect() {
-
-            if (connected.get()){
+            if (connected){
                 return;
             }
             group = new NioEventLoopGroup();
-
             Task<Channel> task = new Task<>() {
                 @Override
                 protected Channel call() throws Exception {
@@ -122,6 +68,8 @@ public class FxController {
                                                 new LengthFieldPrepender(3),
                                                 new JSonDecoder(),
                                                 new JSonEncoder(),
+                                                new AuthorizationHandlerClient(),
+
                                                 new ClientHandler() {
                                                 }
                                         );
@@ -129,47 +77,38 @@ public class FxController {
                                 });
 
                         System.out.println("Client started");
-
 //                        Channel channel1 = bootstrap.connect(INET_HOST, PORT).sync().channel();
 //                        channel1.closeFuture().sync();
-
 //                        channel1.writeAndFlush(new TextMessage());
-
                         ChannelFuture future = bootstrap.connect();
-
                         future.sync();
                         Channel chn = future.channel();
 
                         updateMessage("Connecting");
                         updateProgress(0.2d, 1.0d);
-
                     return chn;
                 }
-
-
                 @Override
                protected void succeeded() {
                     channel = getValue();
-                    connected.set(true);
+                    connected = true;
                 }
                 @Override
                 protected void failed() {
-                    connected.set(false);
+                    connected = false;
                 }
             };
             new Thread(task).start();
         }
 
+//  2. метод дисконекта подключения.
     public void disconnect() {
-
-            if (!connected.get()){
+            if (!connected){
                 return;
             }
-
         Task<Void> task = new Task<>() {
             @Override
             protected Void call() throws Exception {
-
                 updateMessage("Disconnecting");
                 updateProgress(0.1d, 1.0d);
 
@@ -178,24 +117,10 @@ public class FxController {
                 updateProgress(0.5d, 1.0d);
 
                 group.shutdownGracefully().sync();
+                connected = false;
                 return null;
             }
-
-            @Override
-            protected void succeeded() {
-
-                connected.set(false);
-            }
-            @Override
-            protected void failed(){
-                connected.set(false);
-            }
-
         };
         new Thread(task).start();
     }
-
 }
-
-
-
