@@ -35,7 +35,7 @@ public class FileContentMessage extends Message{
         this.content = content;
     }
 
-    @Override
+
     public void handle(ChannelHandlerContext ctx) throws IOException  {
         accessFile = new RandomAccessFile("F:\\9.pdf", "rw");
         System.out.println(getStartPosition());

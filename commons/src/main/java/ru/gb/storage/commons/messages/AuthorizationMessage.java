@@ -1,12 +1,8 @@
 package ru.gb.storage.commons.messages;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.netty.channel.ChannelHandlerContext;
 
-
-import java.io.IOException;
-
-public class AuthorizationMessage extends Message{
+public class AuthorizationMessage extends Message {
     @JsonProperty("login")
     private String login;
     @JsonProperty("password")
@@ -38,16 +34,8 @@ public class AuthorizationMessage extends Message{
         this.authorizationStatus = status;
     }
 
-    @Override
-    public void handle(ChannelHandlerContext ctx) {
-        System.out.println("New auth message!");
-        if (getLogin().equals("login1") && getPassword().equals("pass1")){
-            setAuthorizationStatus(true);
-        } else {
-            setAuthorizationStatus(false);
-        }
-    }
 }
+
 
 
 

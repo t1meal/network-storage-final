@@ -7,7 +7,12 @@ import ru.gb.storage.commons.messages.AuthorizationMessage;
 public class AuthorizationHandler extends SimpleChannelInboundHandler<AuthorizationMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AuthorizationMessage msg) throws Exception {
-        msg.handle(ctx);
+        System.out.println("New authorization message!");
+        if (msg.getLogin().equals("login1") && msg.getPassword().equals("pass1")){
+            msg.setAuthorizationStatus(true);
+        } else {
+            msg.setAuthorizationStatus(false);
+        }
         ctx.writeAndFlush(msg);
     }
 }

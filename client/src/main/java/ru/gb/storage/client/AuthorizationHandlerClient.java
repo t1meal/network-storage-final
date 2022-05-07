@@ -5,6 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import ru.gb.storage.commons.messages.AuthorizationMessage;
 
 public class AuthorizationHandlerClient extends SimpleChannelInboundHandler <AuthorizationMessage> {
+
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, AuthorizationMessage message) throws Exception {
         if (message.getAuthorizationStatus()){

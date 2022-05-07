@@ -69,7 +69,6 @@ public class NetworkController {
                                                 new JSonDecoder(),
                                                 new JSonEncoder(),
                                                 new AuthorizationHandlerClient(),
-
                                                 new ClientHandler() {
                                                 }
                                         );

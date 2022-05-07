@@ -40,6 +40,12 @@
             <artifactId>jackson-annotations</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ru.gb.network-storage</groupId>
+            <artifactId>client</artifactId>
+            <version>DEV-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

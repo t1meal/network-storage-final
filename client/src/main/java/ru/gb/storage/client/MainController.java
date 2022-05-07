@@ -1,16 +1,20 @@
 package ru.gb.storage.client;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import ru.gb.storage.commons.FilesInfo;
-import ru.gb.storage.commons.messages.AuthorizationMessage;
-import ru.gb.storage.commons.messages.DirMessage;
-import ru.gb.storage.commons.messages.FileRequestMessage;
+import ru.gb.storage.commons.messages.*;
 
 import java.io.File;
 import java.nio.file.FileSystems;
@@ -34,20 +38,34 @@ public class MainController {
     private TableView<FilesInfo> tableCloud;
 
     private static BooleanProperty isAuthorized;
+
+    private List<FilesInfo> cloudList;
     private final Path CLIENT_PATH = FileSystems.getDefault().getRootDirectories().iterator().next();
     private final Path CLOUD_PATH = Paths.get("C:\\JAVA\\network-storage-final\\server\\src\\main\\java\\resources");
+
 
     @FXML
     void initialize() {
         isAuthorized = new SimpleBooleanProperty(false);
         isAuthorized.addListener((observableValue, aBoolean, t1) -> MainController.this.changeScene());
-        initTable(tableClient, CLIENT_PATH);
-        initTable(tableCloud, CLOUD_PATH);
+        initTable(tableClient);
+        initTable(tableCloud);
         tableClient.getItems().addAll(fillingList(CLIENT_PATH));
-        tableClient.getItems().addAll(fillingList(CLOUD_PATH));
+        tableCloud.getItems().addAll(fillingList(CLIENT_PATH));
     }
 
-    private void initTable(TableView<FilesInfo> table, Path root) {
+    public void refreshClodTable (List<FilesInfo> storageList){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                tableCloud.getItems().clear();
+                tableCloud.getItems().addAll(fillingList(storageList));
+            }
+        });
+    }
+
+
+    private void initTable(TableView<FilesInfo> table) {
         TableColumn<FilesInfo, String> columnName = new TableColumn<>("Имя");
         columnName.setCellValueFactory(filesInfoStringCellDataFeatures -> new SimpleStringProperty(filesInfoStringCellDataFeatures.getValue().getName()));
         columnName.setPrefWidth(200);
@@ -65,7 +83,8 @@ public class MainController {
                             setText(null);
                             setStyle("");
                         } else {
-                            setText(String.format("%,d bytes", item));
+
+                            setText(String.format("%,d kBts", item/1000));
                         }
                     }
                 };
@@ -83,12 +102,11 @@ public class MainController {
         }
         return listFiles;
     }
-    private ObservableList<FilesInfo> fillingList(DirMessage message) {
+    private ObservableList<FilesInfo> fillingList(List<FilesInfo> storageList) {
         ObservableList<FilesInfo> listFiles = FXCollections.observableArrayList();
-        listFiles.addAll(message.getList());
+        listFiles.addAll(storageList);
         return listFiles;
     }
-
 
     //      5. метод меняющий статус авторизации
     public static void setIsAuthorized(boolean authorized) {
@@ -105,8 +123,9 @@ public class MainController {
     @FXML
     private void tryToAuth() {
         System.out.println("Запрос авторизации к серверу!");
-        AuthorizationMessage message = new AuthorizationMessage(loginField.getText(), passwordField.getText());
-        NetworkController.send(message);
+        NetworkController.send(new AuthorizationMessage(loginField.getText(), passwordField.getText()));
+//        NetworkController.send(new StorageMessage(this));
+        NetworkController.send(new StorageMessage(this));
         loginField.clear();
         passwordField.clear();
     }
@@ -118,6 +137,14 @@ public class MainController {
 
     private void downloadFromCloud() {
 
+    }
+
+    private static void updateUI(Runnable r) {
+        if (Platform.isFxApplicationThread()) {
+            r.run();
+        } else {
+            Platform.runLater(r);
+        }
     }
 
 }

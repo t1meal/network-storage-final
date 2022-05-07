@@ -17,7 +17,7 @@ public class FileRequestMessage extends Message {
         this.path = path;
     }
 
-    @Override
+
     public void handle(ChannelHandlerContext ctx) throws IOException {
             final File file = new File(getPath());
             if (accessFile == null){
